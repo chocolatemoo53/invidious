@@ -162,17 +162,6 @@ module Invidious::Routes::API::V1::Authenticated
           json.object do
             json.field "author", subscription.author
             json.field "authorId", subscription.id
-            json.field "authorThumbnails" do
-              json.array do
-                {176, 48}.each do |size|
-                  json.object do
-                    json.field "url", "#{HOST_URL}/api/v1/channels/#{subscription.id}/avatar/#{size}.jpg"
-                    json.field "width", size
-                    json.field "height", size
-                  end
-                end
-              end
-            end
           end
         end
       end
