@@ -277,7 +277,6 @@ module Invidious::Routing
       get "/api/v1/channels/:ucid/posts", {{namespace}}::Channels, :community
       get "/api/v1/channels/:ucid/channels", {{namespace}}::Channels, :channels
       get "/api/v1/channels/:ucid/search", {{namespace}}::Channels, :search
-      get "/api/v1/channels/:ucid/avatar/:size", {{namespace}}::Channels, :avatar
 
       # Posts
       get "/api/v1/post/:id", {{namespace}}::Channels, :post

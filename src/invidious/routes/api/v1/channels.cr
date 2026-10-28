@@ -14,19 +14,6 @@ module Invidious::Routes::API::V1::Channels
     end
   end
 
-  def self.avatar(env)
-    ucid = env.params.url["ucid"]
-    size = (env.params.url["size"].rchop(".jpg").to_i? || 176).clamp(32, 900)
-
-    channel = nil
-    get_channel()
-
-    url = channel.author_thumbnail.gsub(/=s\d+/, "=s#{size}")
-    url = "https:#{url}" if url.starts_with?("//")
-    env.response.headers["Cache-Control"] = "public, max-age=604800"
-    env.redirect url
-  end
-
   def self.home(env)
     locale = env.get("preferences").as(Preferences).locale
     ucid = env.params.url["ucid"]
