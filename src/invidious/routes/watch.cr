@@ -85,36 +85,22 @@ module Invidious::Routes::Watch
 
     if nojs
       if preferences
-        source = video.comments? ? preferences.comments[0] : "reddit"
+        source = preferences.comments[0]
+        # 2026-10-18 TODO: Make a mechanism to remove unused
+        # preferences from PREFS cookie of the clients
+        # when some preferences are changed, like this one
+        # which is a Reedit comments deprecation that appears
+        # on preferences.
+        #
+        # Fallback for people that have reddit in their prefs
+        source = preferences.comments[1] if source == "reddit"
 
         if source.empty?
           source = preferences.comments[1]
         end
 
         if source == "youtube"
-          begin
-            comment_html = JSON.parse(Comments.fetch_youtube(id, nil, "html", locale, preferences.thin_mode, region))["contentHtml"]
-          rescue ex
-            if preferences.comments[1] == "reddit"
-              comments, reddit_thread = Comments.fetch_reddit(id)
-              comment_html = Frontend::Comments.template_reddit(comments, locale)
-
-              comment_html = Comments.fill_links(comment_html, "https", "www.reddit.com")
-              comment_html = Comments.replace_links(comment_html)
-            end
-          end
-        elsif source == "reddit"
-          begin
-            comments, reddit_thread = Comments.fetch_reddit(id)
-            comment_html = Frontend::Comments.template_reddit(comments, locale)
-
-            comment_html = Comments.fill_links(comment_html, "https", "www.reddit.com")
-            comment_html = Comments.replace_links(comment_html)
-          rescue ex
-            if preferences.comments[1] == "youtube"
-              comment_html = JSON.parse(Comments.fetch_youtube(id, nil, "html", locale, preferences.thin_mode, region))["contentHtml"]
-            end
-          end
+          comment_html = JSON.parse(Comments.fetch_youtube(id, nil, "html", locale, preferences.thin_mode, region))["contentHtml"]
         end
       else
         comment_html = JSON.parse(Comments.fetch_youtube(id, nil, "html", locale, preferences.thin_mode, region))["contentHtml"]
@@ -166,14 +152,14 @@ module Invidious::Routes::Watch
 
     captions = video.captions
 
-    preferred_captions = captions.select { |caption|
+    preferred_captions = captions.select do |caption|
       params.preferred_captions.includes?(caption.name) ||
         params.preferred_captions.includes?(caption.language_code.split("-")[0])
-    }
-    preferred_captions.sort_by! { |caption|
+    end
+    preferred_captions.sort_by! do |caption|
       (params.preferred_captions.index(caption.name) ||
         params.preferred_captions.index(caption.language_code.split("-")[0])).not_nil!
-    }
+    end
     captions = captions - preferred_captions
 
     if show_transcripts

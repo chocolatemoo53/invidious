@@ -82,7 +82,11 @@ module Invidious::HttpServer
     private def dispatch_serve(context, file, file_info, range_header)
       if range_header
         # an IO is needed for `serve_file_range`
-        file = file.is_a?(Bytes) ? IO::Memory.new(file, writeable: false) : file
+        {% if compare_versions(Crystal::VERSION, "1.21.0") <= 0 %}
+          file = file.is_a?(Bytes) ? IO::Memory.new(file, writeable: false) : file
+        {% else %}
+          file = file.is_a?(Bytes) ? IO::Memory.new(file, writable: false) : file
+        {% end %}
         serve_file_range(context, file, range_header, file_info)
       else
         context.response.headers["Accept-Ranges"] = "bytes"
@@ -106,7 +110,7 @@ module Invidious::HttpServer
     # Can be removed once https://github.com/crystal-lang/crystal/issues/15817 is fixed.
     private def serve_file_range(context : HTTP::Server::Context, file : IO, range_header : String, file_info)
       # Paste in the body of inherited serve_file_range
-      {{@type.superclass.methods.select(&.name.==("serve_file_range"))[0].body}}
+      {{ @type.superclass.methods.select(&.name.==("serve_file_range"))[0].body }}
     end
 
     # Clear cached files.

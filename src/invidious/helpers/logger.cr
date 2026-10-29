@@ -14,7 +14,9 @@ end
 class Invidious::LogHandler < Kemal::BaseLogHandler
   def initialize(@io : IO = STDOUT, @level = LogLevel::Debug, use_color : Bool = true)
     Colorize.enabled = use_color
-    Colorize.on_tty_only!
+    {% if compare_versions(Crystal::VERSION, "1.17.0") <= 0 %}
+      Colorize.on_tty_only!
+    {% end %}
   end
 
   def call(context : HTTP::Server::Context)
@@ -55,10 +57,10 @@ class Invidious::LogHandler < Kemal::BaseLogHandler
     end
   end
 
-  {% for level in %w(trace debug info warn error fatal) %}
-    def {{level.id}}(message : String)
-      if LogLevel::{{level.id.capitalize}} >= @level
-        puts("#{Time.utc} [{{level.id}}] #{message}".colorize(color(LogLevel::{{level.id.capitalize}})))
+  {% for level in %w[trace debug info warn error fatal] %}
+    def {{ level.id }}(message : String)
+      if LogLevel::{{ level.id.capitalize }} >= @level
+        puts("#{Time.utc} [{{ level.id }}] #{message}".colorize(color(LogLevel::{{ level.id.capitalize }})))
       end
     end
   {% end %}

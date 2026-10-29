@@ -37,7 +37,7 @@ module Invidious::Search
 
     # Search inside of user subscriptions
     def subscriptions(query : Query, user : Invidious::User) : Array(ChannelVideo)
-      return PG_DB.query_all("
+      sql = <<-SQL
         SELECT id,title,published,updated,ucid,author,length_seconds
         FROM (
           SELECT cv.*,
@@ -47,8 +47,10 @@ module Invidious::Search
           JOIN users ON cv.ucid = any(users.subscriptions)
           WHERE users.email = $1 AND published > now() - interval '1 month'
           ORDER BY published
-        ) v_search WHERE v_search.document @@ plainto_tsquery($2) LIMIT 20 OFFSET $3;",
-        user.email, query.text, (query.page - 1) * 20,
+        ) v_search WHERE v_search.document @@ plainto_tsquery($2) LIMIT 20 OFFSET $3
+        SQL
+
+      return PG_DB.query_all(sql, user.email, query.text, (query.page - 1) * 20,
         as: ChannelVideo
       )
     end

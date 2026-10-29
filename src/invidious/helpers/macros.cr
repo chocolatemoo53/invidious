@@ -49,25 +49,25 @@ module JSON::Serializable
 end
 
 macro templated(_filename, template = "template", navbar_search = true, buffer_footer = false)
-  navbar_search = {{navbar_search}}
-  buffer_footer = {{buffer_footer}}
+  navbar_search = {{ navbar_search }}
+  buffer_footer = {{ buffer_footer }}
 
   {{ filename = "src/invidious/views/" + _filename + ".ecr" }}
   {{ layout = "src/invidious/views/" + template + ".ecr" }}
 
-  __content_filename__ = {{filename}}
-  render {{filename}}, {{layout}}
+  __content_filename__ = {{ filename }}
+  render {{ filename }}, {{ layout }}
 end
 
 macro rendered(filename)
-  render("src/invidious/views/#{{{filename}}}.ecr")
+  render("src/invidious/views/#{{{ filename }}}.ecr")
 end
 
 # Similar to Kemals halt method but works in a
 # method.
 macro haltf(env, status_code = 200, response = "")
-  {{env}}.response.status_code = {{status_code}}
-  {{env}}.response.print {{response}}
-  {{env}}.response.close
+  {{ env }}.response.status_code = {{ status_code }}
+  {{ env }}.response.print {{ response }}
+  {{ env }}.response.close
   return
 end

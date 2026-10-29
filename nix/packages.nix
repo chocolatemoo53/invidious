@@ -20,7 +20,7 @@
 with pkgs;
 [
   # Invidious dependencies
-  pkgsFijxu.crystal
+  crystal_1_21
   sqlite
   shards
   crystalline # LSP, is not that good, but still useful.

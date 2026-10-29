@@ -14,7 +14,7 @@ module Invidious::Routes::Companion
           return self.proxy_companion(env, resp)
         end
       end
-    rescue ex
+    rescue
     end
   end
 
@@ -33,7 +33,7 @@ module Invidious::Routes::Companion
           return self.proxy_companion(env, resp)
         end
       end
-    rescue ex
+    rescue
     end
   end
 
@@ -51,7 +51,7 @@ module Invidious::Routes::Companion
           return self.proxy_companion(env, resp)
         end
       end
-    rescue ex
+    rescue
     end
   end
 

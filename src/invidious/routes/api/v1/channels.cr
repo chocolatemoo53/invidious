@@ -31,7 +31,7 @@ module Invidious::Routes::API::V1::Channels
       begin
         playlist = get_playlist(channel.ucid.sub("UC", "UULF"))
         videos = get_playlist_videos(playlist, offset: 0)
-      rescue ex : InfoException
+      rescue InfoException
         # playlist doesnt exist.
         videos = [] of PlaylistVideo
       end
@@ -118,7 +118,7 @@ module Invidious::Routes::API::V1::Channels
             # Fetch related channels
             begin
               related_channels, _ = fetch_related_channels(channel)
-            rescue ex
+            rescue
               related_channels = [] of SearchChannel
             end
 
@@ -157,7 +157,7 @@ module Invidious::Routes::API::V1::Channels
       begin
         playlist = get_playlist(channel.ucid.sub("UC", "UULF"))
         videos = get_playlist_videos(playlist, offset: 0)
-      rescue ex : InfoException
+      rescue InfoException
         # playlist doesnt exist.
         videos = [] of PlaylistVideo
       end
@@ -203,7 +203,7 @@ module Invidious::Routes::API::V1::Channels
       begin
         playlist = get_playlist(channel.ucid.sub("UC", "UUSH"))
         videos = get_playlist_videos(playlist, offset: 0)
-      rescue ex : InfoException
+      rescue InfoException
         # playlist doesnt exist.
         videos = [] of PlaylistVideo
       end
@@ -249,7 +249,7 @@ module Invidious::Routes::API::V1::Channels
       begin
         playlist = get_playlist(channel.ucid.sub("UC", "UULV"))
         videos = get_playlist_videos(playlist, offset: 0)
-      rescue ex : InfoException
+      rescue InfoException
         # playlist doesnt exist.
         videos = [] of PlaylistVideo
       end
@@ -380,6 +380,35 @@ module Invidious::Routes::API::V1::Channels
     get_channel()
 
     items, next_continuation = fetch_channel_courses(channel.ucid, channel.author, continuation)
+
+    JSON.build do |json|
+      json.object do
+        json.field "playlists" do
+          json.array do
+            items.each do |item|
+              item.to_json(locale, json) if item.is_a?(SearchPlaylist)
+            end
+          end
+        end
+
+        json.field "continuation", next_continuation if next_continuation
+      end
+    end
+  end
+
+  def self.shows(env)
+    locale = env.get("preferences").as(Preferences).locale
+
+    env.response.content_type = "application/json"
+
+    ucid = env.params.url["ucid"]
+    continuation = env.params.query["continuation"]?
+
+    # Use the macro defined above
+    channel = nil # Make the compiler happy
+    get_channel()
+
+    items, next_continuation = fetch_channel_shows(channel.ucid, channel.author, continuation)
 
     JSON.build do |json|
       json.object do

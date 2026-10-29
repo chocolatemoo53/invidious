@@ -278,13 +278,13 @@ module Invidious::Routes::BeforeAll::Companion
         current_companion = self.wrap_current_companion(env, host, current_companion, c_size, working_companions, preferences)
         return current_companion
       else
-        return nil
+        return
       end
     end
 
     current_companion = self.wrap_current_companion(env, host, current_companion, c_size, working_companions, preferences)
     if current_companion.nil?
-      return nil
+      return
     end
 
     status = companions[current_companion].status
@@ -305,7 +305,7 @@ module Invidious::Routes::BeforeAll::Companion
     if index = COMPANION_PREFIXES.index(current_companion_domain)
       return index
     else
-      return nil
+      return
     end
   end
 
@@ -346,7 +346,7 @@ module Invidious::Routes::BeforeAll::Companion
       current_companion = working_companions.sample
       return current_companion
     else
-      return nil
+      return
     end
   end
 end

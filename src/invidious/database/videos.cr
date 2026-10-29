@@ -145,7 +145,7 @@ module Invidious::Database::Videos
           INSERT INTO videos
           VALUES ($1, $2, $3)
           ON CONFLICT (id) DO NOTHING
-        SQL
+          SQL
 
         PG_DB.exec(request, video.id, video.info, video.updated)
       end
@@ -154,7 +154,7 @@ module Invidious::Database::Videos
         request = <<-SQL
           DELETE FROM videos *
           WHERE id = $1
-        SQL
+          SQL
 
         PG_DB.exec(request, video_id)
       end
@@ -163,7 +163,7 @@ module Invidious::Database::Videos
         request = <<-SQL
           SELECT * FROM videos
           WHERE id = $1
-        SQL
+          SQL
 
         PG_DB.query_one?(request, video_id, as: VideoCacheInfo)
       end
@@ -215,7 +215,7 @@ module Invidious::Database::Videos
     cached_video = cache.get(video_id)
     return if cached_video.nil?
 
-    video = Video.new({
+    Video.new({
       id:      video_id,
       info:    JSON.parse(cached_video.info).as_h,
       updated: cached_video.updated,
@@ -226,7 +226,7 @@ module Invidious::Database::Videos
     request = <<-SQL
       DELETE FROM videos *
       WHERE updated < (now() - interval '6 hours')
-    SQL
+      SQL
 
     PG_DB.exec(request)
   end
@@ -236,7 +236,7 @@ module Invidious::Database::Videos
       UPDATE videos
       SET (id, info, updated) = ($1, $2, $3)
       WHERE id = $1
-    SQL
+      SQL
 
     PG_DB.exec(request, video.id, video.info.to_json, video.updated)
   end

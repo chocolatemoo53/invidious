@@ -14,13 +14,13 @@ module Invidious::Database::Users
     request = <<-SQL
       INSERT INTO users
       VALUES (#{arg_array(user_array)})
-    SQL
+      SQL
 
     if update_on_conflict
       request += <<-SQL
         ON CONFLICT (email) DO UPDATE
         SET updated = $1, subscriptions = $3
-      SQL
+        SQL
     end
 
     PG_DB.exec(request, args: user_array)
@@ -30,7 +30,7 @@ module Invidious::Database::Users
     request = <<-SQL
       DELETE FROM users *
       WHERE email = $1
-    SQL
+      SQL
 
     PG_DB.exec(request, user.email)
   end
@@ -44,7 +44,7 @@ module Invidious::Database::Users
       UPDATE users
       SET watched = $1
       WHERE email = $2
-    SQL
+      SQL
 
     PG_DB.exec(request, user.watched, user.email)
   end
@@ -54,7 +54,7 @@ module Invidious::Database::Users
       UPDATE users
       SET watched = array_append(array_remove(watched, $1), $1)
       WHERE email = $2
-    SQL
+      SQL
 
     PG_DB.exec(request, vid, user.email)
   end
@@ -64,7 +64,7 @@ module Invidious::Database::Users
       UPDATE users
       SET watched = array_remove(watched, $1)
       WHERE email = $2
-    SQL
+      SQL
 
     PG_DB.exec(request, vid, user.email)
   end
@@ -74,7 +74,7 @@ module Invidious::Database::Users
       UPDATE users
       SET watched = '{}'
       WHERE email = $1
-    SQL
+      SQL
 
     PG_DB.exec(request, user.email)
   end
@@ -88,7 +88,7 @@ module Invidious::Database::Users
       UPDATE users
       SET feed_needs_update = true, subscriptions = $1
       WHERE email = $2
-    SQL
+      SQL
 
     PG_DB.exec(request, user.subscriptions, user.email)
   end
@@ -99,7 +99,7 @@ module Invidious::Database::Users
       SET feed_needs_update = true,
           subscriptions = array_append(subscriptions,$1)
       WHERE email = $2
-    SQL
+      SQL
 
     PG_DB.exec(request, ucid, user.email)
   end
@@ -110,7 +110,7 @@ module Invidious::Database::Users
       SET feed_needs_update = true,
           subscriptions = array_remove(subscriptions, $1)
       WHERE email = $2
-    SQL
+      SQL
 
     PG_DB.exec(request, ucid, user.email)
   end
@@ -125,7 +125,7 @@ module Invidious::Database::Users
       SET notifications = array_cat(notifications, $1),
           feed_needs_update = true
       WHERE subscriptions @> ARRAY[$2]::text[]
-    SQL
+      SQL
 
     PG_DB.exec(request, video_ids, channel_id)
   end
@@ -135,7 +135,7 @@ module Invidious::Database::Users
       UPDATE users
       SET notifications = array_remove(notifications, $1)
       WHERE email = $2
-    SQL
+      SQL
 
     PG_DB.exec(request, vid, user.email)
   end
@@ -145,7 +145,7 @@ module Invidious::Database::Users
       UPDATE users
       SET notifications = '{}', updated = now()
       WHERE email = $1
-    SQL
+      SQL
 
     PG_DB.exec(request, user.email)
   end
@@ -159,7 +159,7 @@ module Invidious::Database::Users
       UPDATE users
       SET feed_needs_update = true
       WHERE subscriptions @> ARRAY[$1]::text[]
-    SQL
+      SQL
 
     PG_DB.exec(request, channel_id)
   end
@@ -169,7 +169,7 @@ module Invidious::Database::Users
       UPDATE users
       SET preferences = $1
       WHERE email = $2
-    SQL
+      SQL
 
     PG_DB.exec(request, user.preferences.to_json, user.email)
   end
@@ -179,7 +179,7 @@ module Invidious::Database::Users
       UPDATE users
       SET password = $1
       WHERE email = $2
-    SQL
+      SQL
 
     PG_DB.exec(request, pass, user.email)
   end
@@ -189,7 +189,7 @@ module Invidious::Database::Users
       UPDATE users
       SET email = $1
       WHERE email = $2
-    SQL
+      SQL
 
     PG_DB.exec(request, username, user.email)
   end
@@ -199,7 +199,7 @@ module Invidious::Database::Users
       UPDATE session_ids
       SET email = $1
       WHERE email = $2
-    SQL
+      SQL
 
     PG_DB.exec(request, username, user.email)
   end
@@ -209,7 +209,7 @@ module Invidious::Database::Users
       UPDATE playlists
       SET author = $1
       WHERE author = $2
-    SQL
+      SQL
 
     PG_DB.exec(request, username, user.email)
   end
@@ -222,7 +222,7 @@ module Invidious::Database::Users
     request = <<-SQL
       SELECT * FROM users
       WHERE email = $1
-    SQL
+      SQL
 
     return PG_DB.query_one?(request, email, as: User)
   end
@@ -232,7 +232,7 @@ module Invidious::Database::Users
     request = <<-SQL
       SELECT * FROM users
       WHERE email = $1
-    SQL
+      SQL
 
     return PG_DB.query_one(request, email, as: User)
   end
@@ -241,7 +241,7 @@ module Invidious::Database::Users
     request = <<-SQL
       SELECT * FROM users
       WHERE token = $1
-    SQL
+      SQL
 
     return PG_DB.query_one?(request, token, as: User)
   end
@@ -251,7 +251,7 @@ module Invidious::Database::Users
       SELECT notifications
       FROM users
       WHERE email = $1
-    SQL
+      SQL
 
     return PG_DB.query_one(request, user.email, as: Array(String))
   end

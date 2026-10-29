@@ -10,7 +10,7 @@ module Invidious::Videos::Parser
   # TODO: "compactRadioRenderer" (Mix) and
   # TODO: Use a proper struct/class instead of a hacky JSON object
   def parse_related_video(related : JSON::Any) : Hash(String, JSON::Any)?
-    return nil if !related["videoId"]?
+    return if !related["videoId"]?
 
     # The compact renderer has video length in seconds, where the end
     # screen rendered has a full text version ("42:40")
@@ -55,7 +55,7 @@ module Invidious::Videos::Parser
     }
   end
 
-  def extract_video_info(video_id : String, env : HTTP::Server::Context | Nil = nil)
+  def extract_video_info(video_id : String, env : HTTP::Server::Context? = nil)
     next_channel = ::Channel(Hash(String, JSON::Any) | Exception).new(1)
     spawn do
       begin
@@ -69,7 +69,7 @@ module Invidious::Videos::Parser
     player_response = YoutubeAPI.player(video_id: video_id, env: env)
 
     if player_response.nil?
-      return nil
+      return
     end
 
     playability_status = player_response.dig?("playabilityStatus", "status").try &.as_s
@@ -142,7 +142,7 @@ module Invidious::Videos::Parser
     return params
   end
 
-  def try_fetch_streaming_data(id : String, client_config : YoutubeAPI::ClientConfig, env : HTTP::Server::Context | Nil = nil) : Hash(String, JSON::Any)?
+  def try_fetch_streaming_data(id : String, client_config : YoutubeAPI::ClientConfig, env : HTTP::Server::Context? = nil) : Hash(String, JSON::Any)?
     LOGGER.debug("try_fetch_streaming_data: [#{id}] Using #{client_config.client_type} client.")
     response = YoutubeAPI.player(video_id: id, env: env)
 
@@ -158,7 +158,7 @@ module Invidious::Videos::Parser
     elsif playability_status == "OK"
       return response
     else
-      return nil
+      return
     end
   end
 
@@ -303,18 +303,6 @@ module Invidious::Videos::Parser
       likes_button ||= toplevel_buttons.try &.as_a
         .find(&.dig?("toggleButtonRenderer", "defaultIcon", "iconType").=== "LIKE")
         .try &.["toggleButtonRenderer"]
-
-      # Comments enabled?
-      comments_enabled = false
-
-      # When comments are enabled there should be a comment-item-section section in the primary results
-      if primary_results
-        section = primary_results.as_a.find(&.dig?("itemSectionRenderer", "targetId").== "comments-section")
-
-        if section
-          comments_enabled = true
-        end
-      end
 
       # Return data
       # New format as of september 2022
@@ -484,7 +472,6 @@ module Invidious::Videos::Parser
       "authorThumbnail" => JSON::Any.new(author_thumbnail.try &.as_s || ""),
       "authorVerified"  => JSON::Any.new(author_verified || false),
       "subCountText"    => JSON::Any.new(subs_text || "-"),
-      "commentsEnabled" => JSON::Any.new(comments_enabled),
     }
 
     return params

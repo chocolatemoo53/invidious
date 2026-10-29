@@ -75,13 +75,7 @@ function get_youtube_comments() {
             comments.innerHTML = `
             <div id="comments-turned-off-on-video-message" class="h-box v-box">
                 <p><b>${video_data.comments_youtube_disabled_text}</b></p>
-
-                <p><b><button href="javascript:void(0)" data-comments="reddit" id="try-reddit-comments-link" class="simulated_a">
-                    ${video_data.comments_youtube_disabled_try_reddit}
-                </button></b></p>
             </div>`;
-
-            document.getElementById("try-reddit-comments-link").onclick = swap_comments;
         } else {
             comments.innerHTML = fallback; 
         }
@@ -101,12 +95,6 @@ function get_youtube_comments() {
                 </h3> \
                 <b> \
                 '
-                if (video_data.support_reddit) {
-                    commentInnerHtml += ' <a href="javascript:void(0)" data-comments="reddit"> \
-                        {redditComments} \
-                    </a> \
-                    '
-                }
                 if (video_data.comments_top_text) {
                     commentInnerHtml += comments_sort === 'top'
                         ? ' {topText} | <a href="javascript:void(0)" data-sort="new">{newestText}</a>'
@@ -118,7 +106,6 @@ function get_youtube_comments() {
             <hr>'
             commentInnerHtml = commentInnerHtml.supplant({
                 contentHtml: response.contentHtml,
-                redditComments: video_data.reddit_comments_text,
                 topText: video_data.comments_top_text,
                 newestText: video_data.comments_newest_text,
                 commentsText: video_data.comments_text.supplant({
@@ -131,9 +118,6 @@ function get_youtube_comments() {
             });
             comments.innerHTML = commentInnerHtml;
             comments.children[0].children[0].children[0].onclick = toggle_comments;
-            if (video_data.support_reddit) {
-                comments.children[0].children[1].children[0].onclick = swap_comments;
-            }
             var sort_link = comments.querySelector('[data-sort]');
             if (sort_link) sort_link.onclick = function () {
                 comments_sort = sort_link.getAttribute('data-sort');

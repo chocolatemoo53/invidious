@@ -164,7 +164,7 @@ module Invidious::Routes::Playlists
 
     begin
       items = get_playlist_videos(playlist, offset: (page - 1) * 100)
-    rescue ex
+    rescue
       items = [] of PlaylistVideo
     end
 
@@ -255,7 +255,7 @@ module Invidious::Routes::Playlists
     begin
       query = Invidious::Search::Query.new(env.params.query, :playlist, region)
       items = query.process.select(SearchVideo).map(&.as(SearchVideo))
-    rescue ex
+    rescue
       items = [] of SearchVideo
     end
 
@@ -387,6 +387,7 @@ module Invidious::Routes::Playlists
     referer = get_referer(env)
 
     plid = env.params.query["list"]?.try &.gsub(/[^a-zA-Z0-9_-]/, "")
+    plid ||= env.params.url["id"]?.try &.[2..]
     if !plid
       return env.redirect "/"
     end

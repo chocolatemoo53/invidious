@@ -20,7 +20,7 @@ struct YoutubeConnectionPool
 
     begin
       response = yield conn
-    rescue ex
+    rescue
       conn.close
       conn = make_client(url, force_resolve: true)
 
@@ -102,7 +102,7 @@ class CompanionConnectionPool
 
     begin
       response = yield wrapper
-    rescue ex
+    rescue
       wrapper.close
 
       make_client(@companion.private_url, use_http_proxy: false)

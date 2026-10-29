@@ -14,6 +14,7 @@
     when .podcasts?  then "/channel/#{ucid}/podcasts"
     when .releases?  then "/channel/#{ucid}/releases"
     when .courses? then "/channel/#{ucid}/courses"
+    when .shows?  then "/channel/#{ucid}/shows"
     else
       "/channel/#{ucid}"
     end
@@ -61,5 +62,5 @@
 <%= rendered "components/items_paginated" %>
 
 <% if selected_tab == Frontend::ChannelPage::TabsAvailable::Playlists %>
-<div id="footer_buffer"></div>  
+<div id="footer_buffer"></div>
 <% end %>

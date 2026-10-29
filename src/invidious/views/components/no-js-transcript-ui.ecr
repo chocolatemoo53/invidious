@@ -9,7 +9,10 @@
             <% transcript_time_url_param = env.params.query.dup %>
             <% transcript_time_url_param.delete_all("t") %>
 
-            <% transcript.lines.each do | line | %>
+            <%
+              # ameba:disable Performance/ExcessiveAllocations
+              transcript.lines.each do | line |
+            %>
                 <% if line.is_a? Invidious::Videos::Transcript::HeadingLine %>
                     <div class="transcript-title-line"> <h4> <%= line.line %> </h4> </div>
                 <% else %>
