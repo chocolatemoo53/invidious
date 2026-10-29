@@ -256,6 +256,10 @@ module Invidious::Routes::API::Manifest
       end
       manifest = manifest.gsub("https://www.youtube.com", "#{scheme}#{env.request.headers["Host"]}")
       manifest = manifest.gsub("index.m3u8", "index.m3u8?local=true")
+      manifest = manifest.lines.map do |line|
+        next line unless line.starts_with?("#EXT-X-STREAM-INF") && line.includes?("AUDIO=")
+        line.sub(/CODECS="([^"]*)"/) { |_, match| %(CODECS="#{match[1].split(',').reject(&.strip.starts_with?("mp4a")).join(',')}") }
+      end.join('\n')
     end
 
     manifest
