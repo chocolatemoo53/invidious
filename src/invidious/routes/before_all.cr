@@ -103,6 +103,7 @@ module Invidious::Routes::BeforeAll
         companion_status,
         preferences
       )
+      companion_csp = companion_status.companions.map(&.csp).join unless companion_csp.empty?
     end
 
     # TODO: Remove style-src's 'unsafe-inline', requires to remove all
