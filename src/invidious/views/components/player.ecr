@@ -69,7 +69,7 @@
                 <% end %>
             <% end %>
 
-            <% if hlsvp = video.hls_manifest_url %>
+            <% if (hlsvp = video.hls_manifest_url) && (hlsvp[/\/expire\/(\d+)/, 1]?.try(&.to_i64) || 0) > Time.utc.to_unix + 600 %>
                 <source src="<%= URI.parse(hlsvp).request_target %>?local=true&native=true" type="application/x-mpegURL" hidequalityoption="true">
             <% end %>
         <% end %>
