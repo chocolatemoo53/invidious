@@ -260,6 +260,17 @@ module Invidious::Routes::API::Manifest
         next line unless line.starts_with?("#EXT-X-STREAM-INF") && line.includes?("AUDIO=")
         line.sub(/CODECS="([^"]*)"/) { |_, match| %(CODECS="#{match[1].split(',').reject(&.strip.starts_with?("mp4a")).join(',')}") }
       end.join('\n')
+    else
+      lines = manifest.lines
+      variants = lines.each_index.select { |i| lines[i].starts_with?("#EXT-X-STREAM-INF") }.to_a
+      if best = variants.max_by? { |i| lines[i][/BANDWIDTH=(\d+)/, 1]?.try(&.to_i) || 0 }
+        audio = lines[best][/AUDIO="([^"]*)"/, 1]?
+        manifest = lines.each_with_index.reject do |line, i|
+          (variants.includes?(i) && i != best) ||
+            (variants.includes?(i - 1) && i - 1 != best) ||
+            (audio && line.starts_with?("#EXT-X-MEDIA") && line.includes?("TYPE=AUDIO") && !line.includes?(%(GROUP-ID="#{audio}")))
+        end.map(&.[0]).join('\n')
+      end
     end
 
     manifest
