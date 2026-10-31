@@ -68,6 +68,10 @@
                 <source src="<%= src_url %>&local=true" type="<%= mimetype %>" hidequalityoption="true">
                 <% end %>
             <% end %>
+
+            <% if hlsvp = video.hls_manifest_url %>
+                <source src="<%= URI.parse(hlsvp).request_target %>?local=true&native=true" type="application/x-mpegURL" hidequalityoption="true">
+            <% end %>
         <% end %>
 
         <% preferred_captions.each do |caption|

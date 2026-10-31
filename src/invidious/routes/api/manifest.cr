@@ -242,6 +242,7 @@ module Invidious::Routes::API::Manifest
     end
 
     local = env.params.query["local"]?.try &.== "true"
+    native = env.params.query["native"]?.try &.== "true"
 
     env.response.content_type = "application/x-mpegURL"
     env.response.headers.add("Access-Control-Allow-Origin", "*")
@@ -256,7 +257,11 @@ module Invidious::Routes::API::Manifest
       end
       manifest = manifest.gsub("https://www.youtube.com", "#{scheme}#{env.request.headers["Host"]}")
       manifest = manifest.gsub("index.m3u8", "index.m3u8?local=true")
-      manifest = manifest.lines.map do |line|
+      manifest = manifest.lines.compact_map do |line|
+        if native
+          next if line.starts_with?("#EXT-X-MEDIA") && line.includes?("TYPE=SUBTITLES")
+          next line.sub(/,SUBTITLES="[^"]*"/, "")
+        end
         next line unless line.starts_with?("#EXT-X-STREAM-INF") && line.includes?("AUDIO=")
         line.sub(/CODECS="([^"]*)"/) { |_, match| %(CODECS="#{match[1].split(',').reject(&.strip.starts_with?("mp4a")).join(',')}") }
       end.join('\n')
