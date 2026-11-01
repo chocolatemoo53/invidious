@@ -150,6 +150,9 @@ class Config
     @[YAML::Field(converter: Preferences::URIConverter)]
     property i2p_public_url : URI = URI.parse("")
 
+    @[YAML::Field(converter: Preferences::URIConverter)]
+    property onion_public_url : URI = URI.parse("")
+
     property note : String = ""
     property domain : Array(String) = [] of String
     property community : Bool = false

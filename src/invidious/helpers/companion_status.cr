@@ -66,7 +66,8 @@ class CompanionStatus
             LOGGER.trace("Companion checker: generating CSP for #{c.private_url}")
             self.generate_csp(
               [c.public_url,
-               c.i2p_public_url], index)
+               c.i2p_public_url,
+               c.onion_public_url], index)
           end
         rescue
           @companions[index].status == Status::Down

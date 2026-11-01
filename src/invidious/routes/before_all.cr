@@ -212,6 +212,9 @@ module Invidious::Routes::BeforeAll::Companion
       if host.split(".").last == "i2p"
         env.set "companion_using_i2p", true
         env.set "companion_companion_public_url", CONFIG.invidious_companion[current_companion].i2p_public_url.to_s
+      elsif host.split(".").last == "onion" && CONFIG.invidious_companion[current_companion].onion_public_url.host.presence
+        env.set "companion_using_i2p", false
+        env.set "companion_companion_public_url", CONFIG.invidious_companion[current_companion].onion_public_url.to_s
       else
         env.set "companion_using_i2p", false
         env.set "companion_companion_public_url", CONFIG.invidious_companion[current_companion].public_url.to_s
