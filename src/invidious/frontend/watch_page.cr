@@ -70,6 +70,29 @@ module Invidious::Frontend::WatchPage
           str << "</option>\n"
         end
       end
+      if !CONFIG.disable_video_downloads && CONFIG.invidious_companion.present?
+        best_audio = {} of String => Hash(String, JSON::Any)
+        video_assets.audio_streams.each do |audio|
+          container = audio["mimeType"].as_s.split(";")[0].split("/")[1]
+          best = best_audio[container]?
+          if best.nil? || (audio["bitrate"]?.try &.as_i || 0) > (best["bitrate"]?.try &.as_i || 0)
+            best_audio[container] = audio
+          end
+        end
+
+        video_assets.video_streams.reverse_each do |option|
+          mimetype = option["mimeType"].as_s.split(";")[0]
+          ext = mimetype.split("/")[1]
+          next unless audio = best_audio[ext]?
+
+          value = {"itag": option["itag"], "audio": audio["itag"], "ext": ext}.to_json
+
+          str << "\t\t\t<option value='" << value << "'>"
+          str << option["qualityLabel"] << " - " << mimetype << " @ " << option["fps"] << "fps - video + audio"
+          str << "</option>\n"
+        end
+      end
+
       # DASH video streams
 
       if !CONFIG.disable_video_downloads
