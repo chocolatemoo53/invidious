@@ -209,6 +209,13 @@ module Invidious::Routes::API::V1::Videos
     work_url = sb.proxied_url.dup
     template_path = sb.proxied_url.path
 
+    request_host = env.request.headers["Host"]?.try &.split(":").first
+    if request_host && request_host.ends_with?(".onion")
+      work_url.scheme = "https"
+      work_url.host = request_host
+      work_url.port = nil
+    end
+
     # Initialize cue timing variables
     # NOTE: videojs-vtt-thumbnails gets lost when the cue times don't overlap
     # (i.e: if cue[n] end time is 1:06:25.000, cue[n+1] start time should be 1:06:25.000)
