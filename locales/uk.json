@@ -407,7 +407,6 @@
     "preferences_quality_dash_option_360p": "360p",
     "preferences_region_label": "Ваша країна: ",
     "preferences_quality_option_dash": "DASH (змінна якість)",
-    "preferences_quality_option_hd720": "HD720",
     "preferences_quality_dash_option_2160p": "2160p",
     "preferences_automatic_instance_redirect_label": "Автоматична зміна сервера (redirect.invidious.io як резерв): ",
     "Switch Invidious Instance": "Інший сервер Invidious",
@@ -519,5 +518,6 @@
     "timeline_parse_error_placeholder_message": "Invidious зіткнувся з помилкою під час спроби розібрати цей елемент. Докладнішу інформацію читайте нижче:",
     "preferences_default_playlist": "Типовий список відтворення: ",
     "preferences_default_playlist_none": "Типового списку відтворення не обрано",
-    "Livestreams": "Прямі трансляції"
+    "Livestreams": "Прямі трансляції",
+    "preferences_search_privacy_label": "Приватність пошуку: "
 }

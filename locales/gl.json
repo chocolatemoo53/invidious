@@ -80,7 +80,6 @@
     "preferences_speed_label": "Velocidade por defecto: ",
     "preferences_quality_label": "Calidade de vídeo preferida: ",
     "preferences_quality_option_dash": "DASH (calidade adaptativa)",
-    "preferences_quality_option_hd720": "HD720",
     "preferences_quality_option_medium": "Normal",
     "preferences_quality_option_small": "Baixa",
     "preferences_quality_dash_label": "Calidade de video DASH preferida: ",
@@ -505,5 +504,9 @@
     "Livestreams": "Transmisións en directo",
     "dmca_content": "Non se pode descargar este vídeo nesta instancia debido a unha carta de infracción da DMCA/dereitos de autor enviada ao administrador da instancia.",
     "preferences_search_privacy_label": "Privacidade da busca: ",
-    "preferences_search_privacy_description": "Activar esta preferencia impedira cas túas consultas de busca se garden no historial do navegador."
+    "preferences_search_privacy_description": "Activar esta preferencia impedira cas túas consultas de busca se garden no historial do navegador.",
+    "comments_youtube_disabled_text": "Os comentarios de YouTube están desactivados neste vídeo",
+    "comments_youtube_disabled_try_reddit": "Probar cos comentarios de Reddit?",
+    "comments_invidious_disabled_text": "Os comentarios están ocultos segundo as preferencias do usuario",
+    "comments_youtube_disabled_try_reddit_no_js": "Ola! Parece que tes JavaScript desactivado. Aínda ca persoa que subiu as imaxes desactivou os comentarios de YouTube, podes premer aquí para tentar ver os comentarios de Reddit; ten en conta que poden tardar un pouco máis en cargar."
 }
