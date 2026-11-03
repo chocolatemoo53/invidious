@@ -15,10 +15,10 @@ struct YoutubeConnectionPool
 
   def client(env : HTTP::Server::Context? = nil, headers_to_duplicate : Array(String)? = nil, &)
     conn = pool.checkout
-    # Proxy needs to be reinstated every time we get a client from the pool
-    configure_proxy(conn) if CONFIG.http_proxy
 
     begin
+      # Proxy needs to be reinstated every time we get a client from the pool
+      configure_proxy(conn) if CONFIG.http_proxy
       response = yield conn
     rescue
       conn.close
