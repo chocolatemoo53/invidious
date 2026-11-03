@@ -34,7 +34,7 @@ module Invidious::Routes::VideoPlayback
 
     # Sanity check, to avoid being used as an open proxy
     if !host.matches?(/[\w-]+\.(?:googlevideo|c\.youtube)\.com/)
-      return error_template(400, "Invalid \"host\" parameter.")
+      return Errors.error_template(400, "Invalid \"host\" parameter.")
     end
 
     host = "https://#{host}"
@@ -93,7 +93,7 @@ module Invidious::Routes::VideoPlayback
     # Remove the Range header added previously.
     headers.delete("Range") if range_header.nil?
 
-    playback_statistics = Helpers.get_playback_statistic
+    playback_statistics = Invidious::Helpers.get_playback_statistic
     playback_statistics["totalRequests"] += 1
 
     if response.status_code >= 400
@@ -105,7 +105,7 @@ module Invidious::Routes::VideoPlayback
 
     if url.includes? "&file=seg.ts"
       if CONFIG.disabled?("livestreams")
-        return error_template(403, "Administrator has disabled this endpoint.")
+        return Errors.error_template(403, "Administrator has disabled this endpoint.")
       end
 
       begin
@@ -130,7 +130,7 @@ module Invidious::Routes::VideoPlayback
     else
       if query_params["title"]? && CONFIG.disabled?("downloads") ||
          CONFIG.disabled?("dash")
-        return error_template(403, "Administrator has disabled this endpoint.")
+        return Errors.error_template(403, "Administrator has disabled this endpoint.")
       end
 
       content_length = nil
@@ -205,7 +205,7 @@ module Invidious::Routes::VideoPlayback
               end
             end
 
-            Helpers.proxy_file(resp, env)
+            Invidious::Helpers.proxy_file(resp, env)
           end
         rescue ex
           if ex.message != "Error reading socket: Connection reset by peer"
@@ -279,11 +279,11 @@ module Invidious::Routes::VideoPlayback
 
     # Sanity checks
     unless id && validate_video_id(id)
-      return error_template(400, InvalidVideoID.new(id))
+      return Errors.error_template(400, InvalidVideoID.new(id))
     end
 
     if !itag.nil? && (itag <= 0 || itag >= 1000)
-      return error_template(400, "Invalid itag")
+      return Errors.error_template(400, "Invalid itag")
     end
 
     region = env.params.query["region"]?
@@ -292,15 +292,15 @@ module Invidious::Routes::VideoPlayback
     title = env.params.query["title"]?
 
     if title && CONFIG.disabled?("downloads")
-      return error_template(403, "Administrator has disabled this endpoint.")
+      return Errors.error_template(403, "Administrator has disabled this endpoint.")
     end
 
     begin
       video = get_video(id, region: region)
     rescue ex : NotFoundException
-      return error_template(404, ex)
+      return Errors.error_template(404, ex)
     rescue ex
-      return error_template(500, ex)
+      return Errors.error_template(500, ex)
     end
 
     if itag.nil?

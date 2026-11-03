@@ -16,9 +16,9 @@ module Invidious::Routes::API::V1::Videos
     begin
       video = get_video(id, region: region)
     rescue ex : NotFoundException
-      return error_json(404, ex)
+      return Errors.error_json(404, ex)
     rescue ex
-      return error_json(500, ex)
+      return Errors.error_json(500, ex)
     end
 
     return JSON.build do |json|
@@ -34,7 +34,7 @@ module Invidious::Routes::API::V1::Videos
 
     # Sanity checks
     unless validate_video_id(id)
-      return error_json(400, InvalidVideoID.new(id))
+      return Errors.error_json(400, InvalidVideoID.new(id))
     end
 
     # See https://github.com/ytdl-org/youtube-dl/blob/6ab30ff50bf6bd0585927cb73c7421bef184f87a/youtube_dl/extractor/youtube.py#L1354
@@ -294,7 +294,7 @@ module Invidious::Routes::API::V1::Videos
 
         annotations = response.body
 
-        Helpers.cache_annotation(video_id, annotations)
+        Invidious::Helpers.cache_annotation(video_id, annotations)
       end
     else # "youtube"
       response = YT_POOL.client &.get("/annotations_invideo?video_id=#{video_id}")
@@ -349,7 +349,7 @@ module Invidious::Routes::API::V1::Videos
     #
     # Fallback for API users that still use Reddit as a source
     if source == "reddit"
-      return error_json(410, RedditIsDeprecated.new)
+      return Errors.error_json(410, RedditIsDeprecated.new)
     end
 
     if source == "youtube"
@@ -358,9 +358,9 @@ module Invidious::Routes::API::V1::Videos
       begin
         comments = Comments.fetch_youtube(id, continuation, format, locale, thin_mode, region, sort_by: sort_by)
       rescue ex : NotFoundException
-        return error_json(404, ex)
+        return Errors.error_json(404, ex)
       rescue ex
-        return error_json(500, ex)
+        return Errors.error_json(500, ex)
       end
 
       return comments
@@ -377,10 +377,10 @@ module Invidious::Routes::API::V1::Videos
     proxy = {"1", "true"}.any? &.== env.params.query["local"]?
 
     response = YoutubeAPI.resolve_url("https://www.youtube.com/clip/#{clip_id}")
-    return error_json(400, "Invalid clip ID") if response["error"]?
+    return Errors.error_json(400, "Invalid clip ID") if response["error"]?
 
     video_id = response.dig?("endpoint", "watchEndpoint", "videoId").try &.as_s
-    return error_json(400, "Invalid clip ID") if video_id.nil?
+    return Errors.error_json(400, "Invalid clip ID") if video_id.nil?
 
     start_time = nil
     end_time = nil
@@ -393,9 +393,9 @@ module Invidious::Routes::API::V1::Videos
     begin
       video = get_video(video_id, region: region)
     rescue ex : NotFoundException
-      return error_json(404, ex)
+      return Errors.error_json(404, ex)
     rescue ex
-      return error_json(500, ex)
+      return Errors.error_json(500, ex)
     end
 
     return JSON.build do |json|
@@ -427,9 +427,9 @@ module Invidious::Routes::API::V1::Videos
       begin
         video = get_video(id)
       rescue ex : NotFoundException
-        return error_json(404, ex)
+        return Errors.error_json(404, ex)
       rescue ex
-        return error_json(500, ex)
+        return Errors.error_json(500, ex)
       end
 
       response = JSON.build do |json|
@@ -467,14 +467,14 @@ module Invidious::Routes::API::V1::Videos
       begin
         video = get_video(id)
       rescue ex : NotFoundException
-        return error_json(404, ex)
+        return Errors.error_json(404, ex)
       rescue ex
-        return error_json(500, ex)
+        return Errors.error_json(500, ex)
       end
 
       target_transcript = video.captions.select(&.name.== label)
       if target_transcript.empty?
-        return error_json(404, NotFoundException.new("Requested transcript does not exist"))
+        return Errors.error_json(404, NotFoundException.new("Requested transcript does not exist"))
       else
         target_transcript = target_transcript[0]
         lang, auto_generated = target_transcript.language_code, target_transcript.auto_generated
@@ -483,14 +483,14 @@ module Invidious::Routes::API::V1::Videos
       begin
         video = get_video(id)
       rescue ex : NotFoundException
-        return error_json(404, ex)
+        return Errors.error_json(404, ex)
       rescue ex
-        return error_json(500, ex)
+        return Errors.error_json(500, ex)
       end
 
       target_transcript = video.captions.select { |c| c.language_code == lang && c.auto_generated == auto_generated }
       if target_transcript.empty?
-        return error_json(404, NotFoundException.new("Requested transcript does not exist"))
+        return Errors.error_json(404, NotFoundException.new("Requested transcript does not exist"))
       end
       target_transcript = target_transcript[0]
     end
@@ -503,9 +503,9 @@ module Invidious::Routes::API::V1::Videos
         timedtext_xml, lang, auto_generated
       )
     rescue ex : NotFoundException
-      return error_json(404, ex)
+      return Errors.error_json(404, ex)
     rescue ex
-      return error_json(500, ex)
+      return Errors.error_json(500, ex)
     end
 
     return transcript.to_json

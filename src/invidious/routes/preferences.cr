@@ -361,7 +361,7 @@ module Invidious::Routes::PreferencesRoute
 
           if !success
             haltf(env, status_code: 415,
-              response: error_template(415, "Invalid subscription file uploaded")
+              response: Errors.error_template(415, "Invalid subscription file uploaded")
             )
           end
         when "import_youtube_pl"
@@ -370,7 +370,7 @@ module Invidious::Routes::PreferencesRoute
 
           if !success
             haltf(env, status_code: 415,
-              response: error_template(415, "Invalid playlist file uploaded")
+              response: Errors.error_template(415, "Invalid playlist file uploaded")
             )
           end
         when "import_youtube_wh"
@@ -379,7 +379,7 @@ module Invidious::Routes::PreferencesRoute
 
           if !success
             haltf(env, status_code: 415,
-              response: error_template(415, "Invalid watch history file uploaded")
+              response: Errors.error_template(415, "Invalid watch history file uploaded")
             )
           end
         when "import_freetube"
@@ -391,7 +391,7 @@ module Invidious::Routes::PreferencesRoute
 
           if !success
             haltf(env, status_code: 415,
-              response: error_template(415, "Uploaded file is too large")
+              response: Errors.error_template(415, "Uploaded file is too large")
             )
           end
         end

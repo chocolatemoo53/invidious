@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 git.nadeko.net/fijxu/84codes-crystal-openssl:1.21.0 AS dependabot-crystal
+FROM --platform=linux/amd64 git.nadeko.net/fijxu/84codes-crystal-openssl:1.22.2 AS dependabot-crystal
 
 FROM dependabot-crystal AS builder
 
@@ -24,7 +24,7 @@ COPY ./scripts/ ./scripts/
 COPY ./assets/ ./assets/
 COPY ./videojs-dependencies.yml ./videojs-dependencies.yml
 
-RUN crystal spec --warnings all \
+RUN crystal spec -v --warnings all \
     --link-flags "-lxml2 -llzma"
 
 # 2026-08-04:

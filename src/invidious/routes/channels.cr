@@ -23,7 +23,7 @@ module Invidious::Routes::Channels
       sort_by ||= "last"
       sort_options = {"last", "oldest", "newest"}
 
-      items, next_continuation = fetch_channel_playlists(
+      items, next_continuation = Invidious::Channels::Playlists.fetch_channel_playlists(
         channel.ucid, channel.author, continuation, sort_by
       )
 
@@ -42,8 +42,8 @@ module Invidious::Routes::Channels
         sort_by = ""
         sort_options = [] of String
         begin
-          playlist = get_playlist(channel.ucid.sub("UC", "UULF"))
-          items = get_playlist_videos(playlist, offset: 0)
+          playlist = Invidious::Playlists::Playlists.get_playlist(channel.ucid.sub("UC", "UULF"))
+          items = Invidious::Playlists::Playlists.get_playlist_videos(playlist, offset: 0)
         rescue InfoException
           # playlist doesnt exist.
           items = [] of PlaylistVideo
@@ -77,8 +77,8 @@ module Invidious::Routes::Channels
       sort_by = ""
       sort_options = [] of String
       begin
-        playlist = get_playlist(channel.ucid.sub("UC", "UUSH"))
-        items = get_playlist_videos(playlist, offset: 0)
+        playlist = Invidious::Playlists::Playlists.get_playlist(channel.ucid.sub("UC", "UUSH"))
+        items = Invidious::Playlists::Playlists.get_playlist_videos(playlist, offset: 0)
       rescue InfoException
         # playlist doesnt exist.
         items = [] of PlaylistVideo
@@ -112,8 +112,8 @@ module Invidious::Routes::Channels
       sort_by = ""
       sort_options = [] of String
       begin
-        playlist = get_playlist(channel.ucid.sub("UC", "UULV"))
-        items = get_playlist_videos(playlist, offset: 0)
+        playlist = Invidious::Playlists::Playlists.get_playlist(channel.ucid.sub("UC", "UULV"))
+        items = Invidious::Playlists::Playlists.get_playlist_videos(playlist, offset: 0)
       rescue InfoException
         # playlist doesnt exist.
         items = [] of PlaylistVideo
@@ -146,7 +146,7 @@ module Invidious::Routes::Channels
       return env.redirect "/channel/#{channel.ucid}"
     end
 
-    items, next_continuation = fetch_channel_playlists(
+    items, next_continuation = Invidious::Channels::Playlists.fetch_channel_playlists(
       channel.ucid, channel.author, continuation, (sort_by || "last")
     )
 
@@ -167,7 +167,7 @@ module Invidious::Routes::Channels
     sort_by = ""
     sort_options = [] of String
 
-    items, next_continuation = fetch_channel_podcasts(
+    items, next_continuation = Invidious::Channels::Playlists.fetch_channel_podcasts(
       channel.ucid, channel.author, continuation
     )
 
@@ -187,7 +187,7 @@ module Invidious::Routes::Channels
     sort_by = ""
     sort_options = [] of String
 
-    items, next_continuation = fetch_channel_releases(
+    items, next_continuation = Invidious::Channels::Playlists.fetch_channel_releases(
       channel.ucid, channel.author, continuation
     )
 
@@ -207,7 +207,7 @@ module Invidious::Routes::Channels
     sort_by = ""
     sort_options = [] of String
 
-    items, next_continuation = fetch_channel_courses(
+    items, next_continuation = Invidious::Channels::Playlists.fetch_channel_courses(
       channel.ucid, channel.author, continuation
     )
 
@@ -272,7 +272,7 @@ module Invidious::Routes::Channels
     sort_options = [] of String
 
     begin
-      items = JSON.parse(fetch_channel_community(ucid, continuation, locale, "json", thin_mode))
+      items = JSON.parse(Invidious::Channels::Community.fetch_channel_community(ucid, continuation, locale, "json", thin_mode))
     rescue ex : InfoException
       env.response.status_code = 500
       error_message = ex.message
@@ -280,7 +280,7 @@ module Invidious::Routes::Channels
       env.response.status_code = 404
       error_message = ex.message
     rescue ex
-      return error_template(500, ex)
+      return Errors.error_template(500, ex)
     end
 
     templated "community"
@@ -305,14 +305,14 @@ module Invidious::Routes::Channels
 
     if !ucid.nil?
       ucid = ucid.to_s
-      post_response = fetch_channel_community_post(ucid, id, locale, "json", thin_mode)
+      post_response = Invidious::Channels::Community.fetch_channel_community_post(ucid, id, locale, "json", thin_mode)
     else
       # resolve the url to get the author's UCID
       response = YoutubeAPI.resolve_url("https://www.youtube.com/post/#{id}")
-      return error_template(400, "Invalid post ID") if response["error"]?
+      return Errors.error_template(400, "Invalid post ID") if response["error"]?
 
-      ucid = decode_ucid_from_post_protobuf(response.dig("endpoint", "browseEndpoint", "params").as_s)
-      post_response = fetch_channel_community_post(ucid, id, locale, "json", thin_mode)
+      ucid = Invidious::Channels::Community.decode_ucid_from_post_protobuf(response.dig("endpoint", "browseEndpoint", "params").as_s)
+      post_response = Invidious::Channels::Community.fetch_channel_community_post(ucid, id, locale, "json", thin_mode)
     end
 
     post_response = JSON.parse(post_response)
@@ -334,7 +334,7 @@ module Invidious::Routes::Channels
       return env.redirect "/channel/#{channel.ucid}"
     end
 
-    items, next_continuation = fetch_related_channels(channel, continuation)
+    items, next_continuation = Invidious::Channels::About.fetch_related_channels(channel, continuation)
 
     # Featured/related channels can't be sorted
     sort_options = [] of String
@@ -360,6 +360,17 @@ module Invidious::Routes::Channels
     "posts",
   }
 
+  def self.potential_brand_redirect(env)
+    # Check for known tab in url before trying to brand_redirect (avoids unneeded request to YouTube)
+    selected_tab = env.params.url["tab"]?.try &.downcase
+
+    if KNOWN_TABS.includes? selected_tab
+      brand_redirect(env)
+    else
+      Invidious::Routes::Misc.home(env)
+    end
+  end
+
   # Redirects brand url channels to a normal /channel/:ucid route
   def self.brand_redirect(env)
     locale = env.get("preferences").as(Preferences).locale
@@ -379,10 +390,10 @@ module Invidious::Routes::Channels
       resolved_url = YoutubeAPI.resolve_url("https://www.youtube.com#{env.request.path}#{yt_url_params.size > 0 ? "?#{yt_url_params}" : ""}")
       ucid = resolved_url["endpoint"]["browseEndpoint"]["browseId"]
     rescue InfoException | KeyError
-      return error_template(404, I18n.translate(locale, "This channel does not exist."))
+      return Errors.error_template(404, I18n.translate(locale, "This channel does not exist."))
     end
 
-    selected_tab = env.params.url["tab"]?
+    selected_tab = env.params.url["tab"]?.try &.downcase
 
     if KNOWN_TABS.includes? selected_tab
       url = "/channel/#{ucid}/#{selected_tab}"
@@ -405,7 +416,7 @@ module Invidious::Routes::Channels
 
     user = env.params.query["user"]?
     if !user
-      return error_template(404, "This channel does not exist.")
+      return Errors.error_template(404, "This channel does not exist.")
     else
       env.redirect "/user/#{user}#{uri_params}"
     end
@@ -458,13 +469,13 @@ module Invidious::Routes::Channels
     continuation = env.params.query["continuation"]?
 
     begin
-      channel = get_about_info(ucid)
+      channel = Invidious::Channels::About.get_about_info(ucid)
     rescue ex : ChannelRedirect
       return env.redirect env.request.resource.gsub(ucid, ex.channel_id)
     rescue ex : NotFoundException
-      return error_template(404, ex)
+      return Errors.error_template(404, ex)
     rescue ex
-      return error_template(500, ex)
+      return Errors.error_template(500, ex)
     end
 
     env.set "search", "channel:#{ucid} "

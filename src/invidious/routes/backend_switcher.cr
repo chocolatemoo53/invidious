@@ -8,7 +8,7 @@ module Invidious::Routes::BackendSwitcher
     user = env.get? "user"
 
     if companion_id.nil?
-      return error_template(400, "Companion ID is required")
+      return Errors.error_template(400, "Companion ID is required")
     end
 
     if user
