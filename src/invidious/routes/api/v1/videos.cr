@@ -14,7 +14,7 @@ module Invidious::Routes::API::V1::Videos
     proxy = {"1", "true"}.any? &.== env.params.query["local"]?
 
     begin
-      video = get_video(id, region: region)
+      video = get_video(id, region: region, env: env)
     rescue ex : NotFoundException
       return Errors.error_json(404, ex)
     rescue ex
@@ -46,7 +46,7 @@ module Invidious::Routes::API::V1::Videos
     # getting video info.
 
     begin
-      video = get_video(id, region: region)
+      video = get_video(id, region: region, env: env)
     rescue NotFoundException
       haltf env, 404
     rescue
@@ -174,7 +174,7 @@ module Invidious::Routes::API::V1::Videos
     region = env.params.query["region"]?
 
     begin
-      video = get_video(id, region: region)
+      video = get_video(id, region: region, env: env)
     rescue NotFoundException
       haltf env, 404
     rescue
@@ -391,7 +391,7 @@ module Invidious::Routes::API::V1::Videos
     end
 
     begin
-      video = get_video(video_id, region: region)
+      video = get_video(video_id, region: region, env: env)
     rescue ex : NotFoundException
       return Errors.error_json(404, ex)
     rescue ex
@@ -425,7 +425,7 @@ module Invidious::Routes::API::V1::Videos
     # Return all available transcript options when none is given
     if !label && !lang
       begin
-        video = get_video(id)
+        video = get_video(id, env: env)
       rescue ex : NotFoundException
         return Errors.error_json(404, ex)
       rescue ex
@@ -465,7 +465,7 @@ module Invidious::Routes::API::V1::Videos
     # the transcript through the given label
     if lang.nil?
       begin
-        video = get_video(id)
+        video = get_video(id, env: env)
       rescue ex : NotFoundException
         return Errors.error_json(404, ex)
       rescue ex
@@ -481,7 +481,7 @@ module Invidious::Routes::API::V1::Videos
       end
     else
       begin
-        video = get_video(id)
+        video = get_video(id, env: env)
       rescue ex : NotFoundException
         return Errors.error_json(404, ex)
       rescue ex
