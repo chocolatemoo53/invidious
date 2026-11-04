@@ -713,9 +713,9 @@ private module Parsers
         published = nil
         view_count_text = nil
         # Contains the views of the video and the published time of the video.
-        if (metadata_rows = metadata.dig("metadata", "contentMetadataViewModel", "metadataRows").try &.as_a)
+        if (metadata_rows = metadata.dig?("metadata", "contentMetadataViewModel", "metadataRows").try &.as_a)
           metadata_rows.each do |row|
-            metadata_parts = row.dig("metadataParts").try &.as_a
+            metadata_parts = row["metadataParts"]?.try &.as_a
 
             if view_count_text.nil?
               view_count_text = metadata_parts.try &.find { |item| item["icon"]?.nil? && item.dig?("text", "content").try &.as_s.includes?("views") }
