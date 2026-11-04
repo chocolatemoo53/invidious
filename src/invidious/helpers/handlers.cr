@@ -129,6 +129,14 @@ class APIHandler < Kemal::Handler
 
   def call(env)
     env.response.headers["Access-Control-Allow-Origin"] = "*" if only_match?(env)
+
+    if env.request.method == "OPTIONS" && only_match?(env)
+      env.response.headers["Access-Control-Allow-Methods"] = "GET, POST, PATCH, DELETE, OPTIONS"
+      env.response.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type"
+      env.response.status_code = 204
+      return
+    end
+
     call_next env
   end
 end
