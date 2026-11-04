@@ -305,6 +305,8 @@ struct Video
 end
 
 def get_video(id, refresh = true, region = nil, force_refresh = false, env : HTTP::Server::Context? = nil)
+  return fetch_video(id, region, env) if env.try &.get?("companion_requested")
+
   if (video = Invidious::Database::Videos.select(id)) && !region
     # If record was last updated over 10 minutes ago, or video has since premiered,
     # refresh (expire param in response lasts for 6 hours)

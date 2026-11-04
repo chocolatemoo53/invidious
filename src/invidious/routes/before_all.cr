@@ -182,8 +182,13 @@ module Invidious::Routes::BeforeAll::Companion
       env.set "companion_companion_public_url", CONFIG.invidious_companion[index].public_url.to_s
       current_companion = index
     else
-      # Set cookie if there is no cookie
-      if !env.request.cookies.has_key?("PREFS")
+      requested_companion = env.params.query["companion"]?.try(&.to_i?)
+
+      if requested_companion && (1..c_size).includes?(requested_companion) && env.request.path.starts_with?("/api/v1/")
+        current_companion = requested_companion - 1
+        env.set "companion_requested", true
+      elsif !env.request.cookies.has_key?("PREFS")
+        # Set cookie if there is no cookie
         current_companion = get_companion(preferences)
         current_companion = self.find_available_companion(env, host, nil, companion_status, preferences)
         if current_companion
