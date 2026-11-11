@@ -140,7 +140,7 @@
                         <% end %>
                     <% else %>
                         <%
-                        current_page = env.get("current_page")
+                        current_page = env.get?("current_page")
                         CONFIG.invidious_companion.each_with_index do | companion, index |
                         next if companion.community && !preferences.show_community_backends
                         next if companion.i2p_public_url.host.nil? && using_i2p
