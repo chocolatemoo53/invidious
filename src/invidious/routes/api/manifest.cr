@@ -220,7 +220,7 @@ module Invidious::Routes::API::Manifest
 
         raw_params["host"] = uri.host.not_nil!
 
-        if CONFIG.https_only
+        if CONFIG.https_only && !env.request.headers["Host"].split(":").first.ends_with?(".i2p")
           scheme = "https://"
         else
           scheme = "http://"
@@ -250,7 +250,7 @@ module Invidious::Routes::API::Manifest
     manifest = response.body
 
     if local
-      if CONFIG.https_only
+      if CONFIG.https_only && !env.request.headers["Host"].split(":").first.ends_with?(".i2p")
         scheme = "https://"
       else
         scheme = "http://"

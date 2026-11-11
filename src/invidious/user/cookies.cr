@@ -17,15 +17,13 @@ struct Invidious::User
       domain = domain.split(":")[0]
       # Not secure if it's being accessed from I2P
       # Browsers expect the domain to include https. On I2P there is no HTTPS
-      if domain.not_nil!.split(".").last == "i2p"
-        @@secure = false
-      end
+      secure = @@secure && domain.not_nil!.split(".").last != "i2p"
       return HTTP::Cookie.new(
         name: "SID",
         domain: domain,
         value: sid,
         expires: Time.utc + 2.years,
-        secure: @@secure,
+        secure: secure,
         http_only: true,
         samesite: HTTP::Cookie::SameSite::Lax
       )
@@ -40,15 +38,13 @@ struct Invidious::User
       domain = domain.split(":")[0]
       # Not secure if it's being accessed from I2P
       # Browsers expect the domain to include https. On I2P there is no HTTPS
-      if domain.not_nil!.split(".").last == "i2p"
-        @@secure = false
-      end
+      secure = @@secure && domain.not_nil!.split(".").last != "i2p"
       return HTTP::Cookie.new(
         name: "PREFS",
         domain: domain,
         value: URI.encode_www_form(preferences.to_json),
         expires: Time.utc + 2.years,
-        secure: @@secure,
+        secure: secure,
         http_only: false,
         samesite: HTTP::Cookie::SameSite::Lax,
         path: "/"

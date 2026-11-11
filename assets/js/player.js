@@ -619,7 +619,7 @@ if (CONFIG.videojs.max_goal_buffer_length) {
 if (CONFIG.videojs.initial_bandwidth) {
     videojs.Vhs.BANDWIDTH = CONFIG.videojs.initial_bandwidth;
 }
-if (location.hostname.endsWith('.onion')) {
+if (location.hostname.endsWith('.onion') || location.hostname.endsWith('.i2p')) {
     videojs.Vhs.GOAL_BUFFER_LENGTH = 120;
     videojs.Vhs.MAX_GOAL_BUFFER_LENGTH = 240;
     videojs.Vhs.BUFFER_LOW_WATER_LINE = 30;

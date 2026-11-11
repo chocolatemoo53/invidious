@@ -210,8 +210,8 @@ module Invidious::Routes::API::V1::Videos
     template_path = sb.proxied_url.path
 
     request_host = env.request.headers["Host"]?.try &.split(":").first
-    if request_host && request_host.ends_with?(".onion")
-      work_url.scheme = "https"
+    if request_host && (request_host.ends_with?(".onion") || request_host.ends_with?(".i2p"))
+      work_url.scheme = request_host.ends_with?(".i2p") ? "http" : "https"
       work_url.host = request_host
       work_url.port = nil
     end
