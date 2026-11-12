@@ -48,6 +48,22 @@
                 <source src="<%= src_url %>" type='application/dash+xml' label="dash">
             <% end %>
 
+            <% if invidious_companion && !video.live_now
+               remux_base = env.get("companion_companion_public_url").as(String).sub(/\/companion\/?$/, "")
+               remux_height = ->(f : Hash(String, JSON::Any)) { f["height"]?.try(&.as_i?) || 0 }
+               remux_default = ->(f : Hash(String, JSON::Any)) { f["audioTrack"]?.try(&.["audioIsDefault"]?.try(&.as_bool?)) != false }
+               remux_query = ->(f : Hash(String, JSON::Any)) { f["url"]?.try(&.as_s?).try { |u| Invidious::HttpServer::Utils.proxy_video_url(u).split("?", 2)[1]? } }
+               [{"webm", "vp9", "opus"}, {"mp4", "avc1", "mp4a"}].each do |container, vcodec, acodec|
+                 remux_video = video_streams.select { |f| f["mimeType"].as_s.includes?(vcodec) && remux_height.call(f) <= 1080 && remux_query.call(f) }.max_by? { |f| remux_height.call(f) }
+                 remux_audio = audio_streams.select { |f| f["mimeType"].as_s.includes?(acodec) && remux_default.call(f) && remux_query.call(f) }.max_by? { |f| f["bitrate"]?.try(&.as_i?) || 0 }
+                 next unless remux_video && remux_audio
+                 remux_src = "#{remux_base}/videoplayback/remux?f=#{container}&v=#{URI.encode_www_form(remux_query.call(remux_video).not_nil!)}&a=#{URI.encode_www_form(remux_query.call(remux_audio).not_nil!)}"
+                 remux_src += "&t=#{params.video_start.to_i}" if params.video_start > 0
+            %>
+                <source src="<%= HTML.escape(remux_src) %>" type="video/<%= container %>" hidequalityoption="true">
+            <% end
+               end %>
+
             <%
             fmt_stream.reject! { |f| f["itag"] == 17 }
             fmt_stream.sort_by! {|f| params.quality == f["quality"] ? 0 : 1 }
