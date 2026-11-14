@@ -1160,6 +1160,17 @@ function pause() { player.pause(); }
 function stop()  { player.pause(); player.currentTime(0); }
 function toggle_play() { player.paused() ? play() : pause(); }
 
+function firstCaptionsTrack() {
+    const element = document.querySelector('track[kind="captions"]');
+    if (!element) return null;
+    const label = element.getAttribute('label');
+    const tracks = player.textTracks();
+    for (let i = 0; i < tracks.length; i++) {
+        if (tracks[i].kind === 'captions' && tracks[i].label === label) return tracks[i];
+    }
+    return null;
+}
+
 const toggle_captions = (function () {
     let toggledTrack = null;
 
@@ -1191,9 +1202,7 @@ const toggle_captions = (function () {
             return;
         }
 
-        // Used as a fallback if no captions are currently active.
-        // TODO: Make this more intelligent by e.g. relying on browser language.
-        let fallbackCaptionsTrack = null;
+        let fallbackCaptionsTrack = firstCaptionsTrack();
 
         const tracks = player.textTracks();
         for (let i = 0; i < tracks.length; i++) {
@@ -1408,12 +1417,8 @@ addEventListener('keydown', function (e) {
 // show the preferred caption by default
 if (player_data.preferred_caption_found) {
     player.ready(function () {
-        if (!video_data.params.listen && video_data.params.quality === 'dash') {
-            // play.textTracks()[0] on DASH mode is showing some debug messages
-            player.textTracks()[1].mode = 'showing';
-        } else {
-            player.textTracks()[0].mode = 'showing';
-        }
+        const track = firstCaptionsTrack();
+        if (track) track.mode = 'showing';
     });
 }
 

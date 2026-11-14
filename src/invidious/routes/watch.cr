@@ -164,8 +164,8 @@ module Invidious::Routes::Watch
 
     if preferred_captions.empty?
       interface_language = locale.split("-")[0]
-      preferred_captions, captions = captions.partition { |caption| caption.language_code.split("-")[0] == interface_language }
-      preferred_captions.sort_by! { |caption| caption.auto_generated ? 1 : 0 }
+      matching, others = captions.partition { |caption| caption.language_code.split("-")[0] == interface_language }
+      captions = matching.sort_by { |caption| caption.auto_generated ? 1 : 0 } + others
     end
 
     if show_transcripts
