@@ -162,6 +162,12 @@ module Invidious::Routes::Watch
     end
     captions = captions - preferred_captions
 
+    if preferred_captions.empty?
+      interface_language = locale.split("-")[0]
+      preferred_captions, captions = captions.partition { |caption| caption.language_code.split("-")[0] == interface_language }
+      preferred_captions.sort_by! { |caption| caption.auto_generated ? 1 : 0 }
+    end
+
     if show_transcripts
       # Transcripts can be mapped 1:1 to a video's captions.
       # As such the amount of transcripts available is the same as the amount of captions available.
