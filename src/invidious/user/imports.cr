@@ -48,18 +48,35 @@ struct Invidious::User
 
       # Add each video to the playlist from the body content
       csv_body = CSV.new(raw_body.strip('\n'), headers: false)
+      video_ids = [] of String
       csv_body.each do |row|
         video_id = row[0]
-        if playlist
-          next if !video_id
-          next if video_id == "Video Id"
+        next if !video_id
+        next if video_id == "Video Id"
+        video_ids << video_id
+      end
 
-          begin
-            video = get_video(video_id)
-          rescue
-            next
+      videos = Array(Video?).new(video_ids.size, nil)
+      queue = ::Channel(Int32).new(video_ids.size)
+      video_ids.each_index { |i| queue.send(i) }
+      queue.close
+      done = ::Channel(Nil).new
+      workers = Math.min(8, video_ids.size)
+      workers.times do
+        spawn do
+          while i = queue.receive?
+            begin
+              videos[i] = get_video(video_ids[i])
+            rescue
+            end
           end
+          done.send(nil)
+        end
+      end
+      workers.times { done.receive }
 
+      videos.each do |video|
+        if playlist && video
           playlist_video = PlaylistVideo.new({
             title:          video.title,
             id:             video.id,
