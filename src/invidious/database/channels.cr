@@ -52,6 +52,16 @@ module Invidious::Database::Channels
     PG_DB.exec(request, id)
   end
 
+  def update_time(id : String)
+    request = <<-SQL
+      UPDATE channels
+      SET updated = now()
+      WHERE id = $1
+      SQL
+
+    PG_DB.exec(request, id)
+  end
+
   def update_mark_deleted(id : String)
     request = <<-SQL
       UPDATE channels
