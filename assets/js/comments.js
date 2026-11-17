@@ -1,6 +1,6 @@
 var video_data = JSON.parse(document.getElementById('video_data').textContent);
 
-var spinnerHTML = '<h3 style="text-align:center"><div class="loading"><i class="icon ion-ios-refresh"></i></div></h3>';
+var spinnerHTML = '<h3 style="text-align:center"><div class="loading"><i aria-hidden="true" class="icon ion-ios-refresh"></i></div></h3>';
 var spinnerHTMLwithHR = spinnerHTML + '<hr>';
 var comments_sort = 'top';
 

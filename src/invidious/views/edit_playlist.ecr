@@ -10,17 +10,17 @@
         <div class="flex-right button-container">
             <div class="pure-u">
                 <a class="pure-button pure-button-secondary low-profile" dir="auto" href="/playlist?list=<%= plid %>">
-                    <i class="icon ion-md-close"></i>&nbsp;<%= I18n.translate(locale, "generic_button_cancel") %>
+                    <i aria-hidden="true" class="icon ion-md-close"></i>&nbsp;<%= I18n.translate(locale, "generic_button_cancel") %>
                 </a>
             </div>
             <div class="pure-u">
                 <button class="pure-button pure-button-secondary low-profile" dir="auto" type="submit">
-                    <i class="icon ion-md-save"></i>&nbsp;<%= I18n.translate(locale, "generic_button_save") %>
+                    <i aria-hidden="true" class="icon ion-md-save"></i>&nbsp;<%= I18n.translate(locale, "generic_button_save") %>
                 </button>
             </div>
             <div class="pure-u">
                 <a class="pure-button pure-button-secondary low-profile" dir="auto" href="/delete_playlist?list=<%= plid %>">
-                    <i class="icon ion-md-trash"></i>&nbsp;<%= I18n.translate(locale, "generic_button_delete") %>
+                    <i aria-hidden="true" class="icon ion-md-trash"></i>&nbsp;<%= I18n.translate(locale, "generic_button_delete") %>
                 </a>
             </div>
         </div>

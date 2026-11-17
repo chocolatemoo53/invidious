@@ -15,6 +15,6 @@
 		value="<%= env.get?("search").try {|x| HTML.escape(x.as(String)) } %>">
 	</fieldset>
 	<button type="submit" id="searchbutton" aria-label="<%= I18n.translate(locale, "search") %>">
-		<i class="icon ion-ios-search"></i>
+		<i aria-hidden="true" class="icon ion-ios-search"></i>
 	</button>
 </form>

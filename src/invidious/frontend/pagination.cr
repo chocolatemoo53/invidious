@@ -10,10 +10,10 @@ module Invidious::Frontend::Pagination
       # Inverted arrow ("first" points to the right)
       str << I18n.translate(locale, "First page")
       str << "&nbsp;&nbsp;"
-      str << %(<i class="icon ion-ios-arrow-forward"></i>)
+      str << %(<i aria-hidden="true" class="icon ion-ios-arrow-forward"></i>)
     else
       # Regular arrow ("first" points to the left)
-      str << %(<i class="icon ion-ios-arrow-back"></i>)
+      str << %(<i aria-hidden="true" class="icon ion-ios-arrow-back"></i>)
       str << "&nbsp;&nbsp;"
       str << I18n.translate(locale, "First page")
     end
@@ -29,10 +29,10 @@ module Invidious::Frontend::Pagination
       # Inverted arrow ("previous" points to the right)
       str << I18n.translate(locale, "Previous page")
       str << "&nbsp;&nbsp;"
-      str << %(<i class="icon ion-ios-arrow-forward"></i>)
+      str << %(<i aria-hidden="true" class="icon ion-ios-arrow-forward"></i>)
     else
       # Regular arrow ("previous" points to the left)
-      str << %(<i class="icon ion-ios-arrow-back"></i>)
+      str << %(<i aria-hidden="true" class="icon ion-ios-arrow-back"></i>)
       str << "&nbsp;&nbsp;"
       str << I18n.translate(locale, "Previous page")
     end
@@ -46,14 +46,14 @@ module Invidious::Frontend::Pagination
 
     if I18n.locale_is_rtl?(locale)
       # Inverted arrow ("next" points to the left)
-      str << %(<i class="icon ion-ios-arrow-back"></i>)
+      str << %(<i aria-hidden="true" class="icon ion-ios-arrow-back"></i>)
       str << "&nbsp;&nbsp;"
       str << I18n.translate(locale, "Next page")
     else
       # Regular arrow ("next" points to the right)
       str << I18n.translate(locale, "Next page")
       str << "&nbsp;&nbsp;"
-      str << %(<i class="icon ion-ios-arrow-forward"></i>)
+      str << %(<i aria-hidden="true" class="icon ion-ios-arrow-forward"></i>)
     end
 
     str << "</a>"

@@ -56,9 +56,9 @@ module Invidious::Frontend::Comments
         author_name = HTML.escape(child["author"].as_s)
         sponsor_icon = ""
         if child["verified"]?.try &.as_bool && child["authorIsChannelOwner"]?.try &.as_bool
-          author_name += "&nbsp;<i class=\"icon ion ion-md-checkmark-circle\"></i>"
+          author_name += "&nbsp;<i aria-hidden=\"true\" class=\"icon ion ion-md-checkmark-circle\"></i><span class=\"sr-only\">#{I18n.translate(locale, "generic_verified")}</span>"
         elsif child["verified"]?.try &.as_bool
-          author_name += "&nbsp;<i class=\"icon ion ion-md-checkmark\"></i>"
+          author_name += "&nbsp;<i aria-hidden=\"true\" class=\"icon ion ion-md-checkmark\"></i><span class=\"sr-only\">#{I18n.translate(locale, "generic_verified")}</span>"
         end
 
         if child["isSponsor"]?.try &.as_bool
@@ -163,7 +163,7 @@ module Invidious::Frontend::Comments
         end
 
         html << <<-END_HTML
-          <i class="icon ion-ios-thumbs-up"></i> #{number_with_separator(child["likeCount"])}
+          <i aria-hidden="true" class="icon ion-ios-thumbs-up"></i> #{number_with_separator(child["likeCount"])}
           END_HTML
 
         if child["creatorHeart"]?

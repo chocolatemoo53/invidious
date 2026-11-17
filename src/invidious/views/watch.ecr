@@ -107,18 +107,18 @@ we're going to need to do it here in order to allow for translations.
         <% end %>
         <% if params.listen %>
             <a title="<%=I18n.translate(locale, "Video mode")%>" id="link-iv-listen" data-base-url="/watch?<%= env.params.query %>&listen=0" href="/watch?<%= env.params.query %>&listen=0">
-                <i class="icon ion-ios-videocam"></i>
+                <i aria-hidden="true" class="icon ion-ios-videocam"></i>
             </a>
         <% else %>
             <a title="<%=I18n.translate(locale, "Audio mode")%>" id="link-iv-listen" data-base-url="/watch?<%= env.params.query %>&listen=1" href="/watch?<%= env.params.query %>&listen=1">
-                <i class="icon ion-md-headset"></i>
+                <i aria-hidden="true" class="icon ion-md-headset"></i>
             </a>
         <% end %>
     </h1>
 
     <% if !video.is_listed %>
         <h3>
-            <i class="icon ion-ios-unlock"></i> <%= I18n.translate(locale, "Unlisted") %>
+            <i aria-hidden="true" class="icon ion-ios-unlock"></i> <%= I18n.translate(locale, "Unlisted") %>
         </h3>
     <% end %>
 
@@ -229,8 +229,8 @@ we're going to need to do it here in order to allow for translations.
 
             <%= Invidious::Frontend::WatchPage.download_widget(locale, video, video_assets, env) %>
 
-            <p id="views"><i class="icon ion-ios-eye"></i> <%= number_with_separator(video.views) %></p>
-            <p id="likes"><i class="icon ion-ios-thumbs-up"></i> <%= number_with_separator(video.likes) %></p>
+            <p id="views"><i aria-hidden="true" class="icon ion-ios-eye"></i> <span aria-hidden="true"><%= number_with_separator(video.views) %></span><span class="sr-only"><%= I18n.translate_count(locale, "generic_views_count", video.views, I18n::NumberFormatting::Separator) %></span></p>
+            <p id="likes"><i aria-hidden="true" class="icon ion-ios-thumbs-up"></i> <span aria-hidden="true"><%= number_with_separator(video.likes) %></span><span class="sr-only"><%= I18n.translate_count(locale, "generic_likes_count", video.likes, I18n::NumberFormatting::Separator) %></span></p>
             <p id="dislikes" style="display: none; visibility: hidden;"></p>
             <% if !video.genre.nil? && !video.genre.empty? %>
                 <p id="genre"><%= I18n.translate(locale, "Genre: ") %>
@@ -275,7 +275,7 @@ we're going to need to do it here in order to allow for translations.
                         <% if !video.author_thumbnail.empty? %>
                             <img src="/ggpht<%= URI.parse(video.author_thumbnail).request_target %>" alt="" />
                         <% end %>
-                        <span id="channel-name" class="channel-name"><%= author %><% if !video.author_verified.nil? && video.author_verified %>&nbsp;<i class="icon ion ion-md-checkmark-circle"></i><% end %></span>
+                        <span id="channel-name" class="channel-name"><%= author %><% if !video.author_verified.nil? && video.author_verified %>&nbsp;<i aria-hidden="true" class="icon ion ion-md-checkmark-circle"></i><span class="sr-only"><%= I18n.translate(locale, "generic_verified") %></span><% end %></span>
                     </div>
                 </a>
             </div>
@@ -320,8 +320,8 @@ we're going to need to do it here in order to allow for translations.
                 <label for="music-desc-expansion">
                     <h3 id="music-description-title">
                         <%= I18n.translate(locale, "Music in this video") %>
-                        <span class="icon ion-ios-arrow-up"></span>
-                        <span class="icon ion-ios-arrow-down"></span>
+                        <span aria-hidden="true" class="icon ion-ios-arrow-up"></span>
+                        <span aria-hidden="true" class="icon ion-ios-arrow-down"></span>
                     </h3>
                 </label>
 
@@ -415,9 +415,9 @@ we're going to need to do it here in order to allow for translations.
                             <h5 class="pure-g">
                                 <div class="pure-u-14-24">
                                     <% if !rv["ucid"].empty? %>
-                                        <b style="width:100%"><a href="/channel/<%= rv["ucid"] %>"><%= rv["author"]? %><% if rv["author_verified"]? == "true" %>&nbsp;<i class="icon ion ion-md-checkmark-circle"></i><% end %></a></b>
+                                        <b style="width:100%"><a href="/channel/<%= rv["ucid"] %>"><%= rv["author"]? %><% if rv["author_verified"]? == "true" %>&nbsp;<i aria-hidden="true" class="icon ion ion-md-checkmark-circle"></i><span class="sr-only"><%= I18n.translate(locale, "generic_verified") %></span><% end %></a></b>
                                     <% else %>
-                                        <b style="width:100%"><%= rv["author"]? %><% if rv["author_verified"]? == "true" %>&nbsp;<i class="icon ion ion-md-checkmark-circle"></i><% end %></b>
+                                        <b style="width:100%"><%= rv["author"]? %><% if rv["author_verified"]? == "true" %>&nbsp;<i aria-hidden="true" class="icon ion ion-md-checkmark-circle"></i><span class="sr-only"><%= I18n.translate(locale, "generic_verified") %></span><% end %></b>
                                     <% end %>
                                 </div>
 

@@ -550,5 +550,12 @@
     "transcript_widget_title": "Transcript",
     "transcript_widget_no_js_change_transcript_btn": "Swap",
     "dmca_content": "This video cannot be downloaded on this instance due to a DMCA/copyright infringement letter sent to the instance administrator.",
-    "companion_switch_backend": "Switch backend:"
+    "companion_switch_backend": "Switch backend:",
+    "skip_to_content": "Skip to content",
+    "generic_verified": "Verified",
+    "generic_mark_watched": "Mark as watched",
+    "generic_mark_unwatched": "Mark as unwatched",
+    "generic_remove_from_playlist": "Remove from playlist",
+    "generic_likes_count": "{{count}} like",
+    "generic_likes_count_plural": "{{count}} likes"
 }

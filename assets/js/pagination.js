@@ -83,9 +83,9 @@ addEventListener('DOMContentLoaded', function(){
 
         for (let container of prev_page_containers) {
             if (pagination_data.is_rtl) {
-                container.innerHTML = `<button class="pure-button pure-button-secondary">${pagination_data.prev_page}&nbsp;&nbsp;<i class="icon ion-ios-arrow-forward"></i></button>`
+                container.innerHTML = `<button class="pure-button pure-button-secondary">${pagination_data.prev_page}&nbsp;&nbsp;<i aria-hidden="true" class="icon ion-ios-arrow-forward"></i></button>`
             } else {
-                container.innerHTML = `<button class="pure-button pure-button-secondary"><i class="icon ion-ios-arrow-back"></i>&nbsp;&nbsp;${pagination_data.prev_page}</button>`
+                container.innerHTML = `<button class="pure-button pure-button-secondary"><i aria-hidden="true" class="icon ion-ios-arrow-back"></i>&nbsp;&nbsp;${pagination_data.prev_page}</button>`
             }
             container.getElementsByClassName("pure-button")[0].addEventListener("click", button_press);
         }
