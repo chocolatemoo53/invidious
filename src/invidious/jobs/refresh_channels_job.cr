@@ -14,7 +14,12 @@ class Invidious::Jobs::RefreshChannelsJob < Invidious::Jobs::BaseJob
     loop do
       LOGGER.debug("RefreshChannelsJob: Refreshing all channels")
       begin
-        ids = PG_DB.query_all("SELECT id FROM channels ORDER BY updated", as: String)
+        ids = PG_DB.query_all(<<-SQL, as: String)
+          SELECT id FROM channels
+          WHERE id IN (SELECT unnest(subscriptions) FROM users WHERE updated > now() - interval '30 days')
+             OR updated < now() - interval '7 days'
+          ORDER BY updated
+          SQL
       rescue ex
         LOGGER.error("RefreshChannelsJob: #{ex.message}")
         ids = [] of String
