@@ -6,7 +6,7 @@ shards:
 
   athena-negotiation:
     git: https://github.com/athena-framework/negotiation.git
-    version: 0.1.5
+    version: 0.2.0
 
   backtracer:
     git: https://github.com/sija/backtracer.cr.git
@@ -22,11 +22,11 @@ shards:
 
   gcry:
     git: https://github.com/sdogruyol/gcry.git
-    version: 0.34.0
+    version: 0.40.0
 
   http_proxy:
     git: https://github.com/mamantoha/http_proxy.git
-    version: 0.10.3
+    version: 0.17.0
 
   kemal:
     git: https://github.com/kemalcr/kemal.git
@@ -59,3 +59,4 @@ shards:
   sqlite3:
     git: https://github.com/crystal-lang/crystal-sqlite3.git
     version: 0.21.0
+

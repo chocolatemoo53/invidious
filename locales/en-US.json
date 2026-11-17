@@ -557,5 +557,6 @@
     "generic_mark_unwatched": "Mark as unwatched",
     "generic_remove_from_playlist": "Remove from playlist",
     "generic_likes_count": "{{count}} like",
-    "generic_likes_count_plural": "{{count}} likes"
+    "generic_likes_count_plural": "{{count}} likes",
+    "video_details_ai_made": "AI Made video?:"
 }

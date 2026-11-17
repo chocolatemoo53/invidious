@@ -1,5 +1,5 @@
 name: invidious
-version: 2.20261022.0-dev
+version: 2.20261103.0-dev
 
 authors:
   - Invidious team <contact@invidious.io>
@@ -29,19 +29,19 @@ dependencies:
     version: ~> 0.1.5
   athena-negotiation:
     github: athena-framework/negotiation
-    version: ~> 0.1.1
+    version: ~> 0.2.0
   redis:
     github: jgaskins/redis
     version: ~> 0.16.0
   http_proxy:
     github: mamantoha/http_proxy
-    version: ~> 0.10.3
+    version: ~> 0.17.0
   lru:
     github: fijxu/crystal-lru
     version: ~> 1.0.5
   gcry:
     github: sdogruyol/gcry
-    version: ~> 0.34.0
+    version: ~> 0.40.0
 
 development_dependencies:
   spectator:

@@ -232,15 +232,18 @@ we're going to need to do it here in order to allow for translations.
             <p id="views"><i aria-hidden="true" class="icon ion-ios-eye"></i> <span aria-hidden="true"><%= number_with_separator(video.views) %></span><span class="sr-only"><%= I18n.translate_count(locale, "generic_views_count", video.views, I18n::NumberFormatting::Separator) %></span></p>
             <p id="likes"><i aria-hidden="true" class="icon ion-ios-thumbs-up"></i> <span aria-hidden="true"><%= number_with_separator(video.likes) %></span><span class="sr-only"><%= I18n.translate_count(locale, "generic_likes_count", video.likes, I18n::NumberFormatting::Separator) %></span></p>
             <p id="dislikes" style="display: none; visibility: hidden;"></p>
-            <% if !video.genre.nil? && !video.genre.empty? %>
-                <p id="genre"><%= I18n.translate(locale, "Genre: ") %>
-                    <% if !video.genre_url %>
-                        <%= video.genre %>
-                    <% else %>
-                        <a href="<%= video.genre_url %>"><%= video.genre %></a>
-                    <% end %>
+            <% if video.ai_made %>
+                <p id="ai_made"><%= I18n.translate(locale, "video_details_ai_made") %>
+                    <%= I18n.translate_bool(locale, video.ai_made) %>
                 </p>
             <% end %>
+            <p id="genre"><%= I18n.translate(locale, "Genre: ") %>
+                <% if !video.genre_url %>
+                    <%= video.genre %>
+                <% else %>
+                    <a href="<%= video.genre_url %>"><%= video.genre %></a>
+                <% end %>
+            </p>
             <% if video.license %>
                 <% if video.license.empty? %>
                     <p id="license"><%= I18n.translate(locale, "License: ") %><%= I18n.translate(locale, "Standard YouTube license") %></p>
