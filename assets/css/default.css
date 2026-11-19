@@ -2296,3 +2296,13 @@ main:focus {
   outline: 2px solid var(--Color1) !important;
   outline-offset: 2px;
 }
+
+.searchbar .pure-form:focus-within {
+  outline: 2px solid var(--Color1);
+  outline-offset: 2px;
+  border-radius: 0 10px 10px 0;
+}
+
+.searchbar .pure-form :focus-visible {
+  outline: none !important;
+}
