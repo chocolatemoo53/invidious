@@ -374,6 +374,7 @@ input[type="search"]::-webkit-search-cancel-button {
 .dark-theme .searchbar #searchbutton {
   border: 1px solid #4C566A !important;
   background: #3B4252;
+  color: #FFF;
   margin-top: 0;
   padding: 0 10px;
   font-size: 1.5em;
@@ -2292,6 +2293,6 @@ main:focus {
 }
 
 :focus-visible {
-  outline: 2px solid currentColor !important;
+  outline: 2px solid var(--Color1) !important;
   outline-offset: 2px;
 }
