@@ -350,9 +350,9 @@
                 <span class="left">
                     <%
                         if CONFIG.invidious_companion.present?
-                        companion_public_url = env.get("companion_companion_public_url").as(String)
+                        companion_public_url = env.get?("companion_companion_public_url").try &.as(String)
                     %>
-                    <div class="box">You are currently using Backend: <%= current_backend ? companion_public_url : "Unable to get backend, this is bug, please report it!" %></div>
+                    <div class="box">You are currently using Backend: <%= (current_backend && companion_public_url) || "Unable to get backend, this is bug, please report it!" %></div>
                     <% end %>
                     <% if CONFIG.modified_source_code_url %>
                         <%= I18n.translate(locale, "footer_current_version_modified") %>
